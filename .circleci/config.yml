@@ -1,17 +1,48 @@
 version: 2.1
-
-orbs:
-    hello: circleci/hello-build@0.0.7 # circleci/buildpack-deps Docker イメージを使います
-
-workflows:
-    "Hello Workflow":
-        jobs:
-          - hello/hello-build
-
 jobs:
   build:
-    docker: # Executor タイプです。他に machine、macOS という実行タイプを指定できます
-      - image: circleci/node:4.8.2 # プライマリコンテナです。このなかでジョブコマンドが実行されます
+    docker:
+      - image: circleci/node:13.7.0-stretch-browsers
     steps:
-      - checkout # プロジェクトのディレクトリにあるコードをチェックアウトします
-      - run: echo "hello world" # 「echo」コマンドを実行します
+      - checkout
+      - run: echo "Start build"
+      - run: yarn install
+      - run: yarn build
+  lint:
+    docker:
+      - image: circleci/node:13.7.0-stretch-browsers
+    steps:
+      - checkout
+      - run: echo "Start lint"
+      - run: yarn install
+      - run: yarn lint
+  test:
+    docker:
+      - image: circleci/node:13.7.0-stretch-browsers
+    steps:
+      - checkout
+      - run: echo "Start test"
+      - run: yarn install
+      - run: yarn test --single-run
+  e2e:
+    docker:
+      - image: circleci/node:13.7.0-stretch-browsers
+    steps:
+      - checkout
+      - run: echo "Start e2e"
+      - run: yarn install
+      - run: yarn e2e
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - lint:
+          requires:
+            - build
+      - test:
+          requires:
+            - build
+      - e2e:
+          requires:
+            - build
