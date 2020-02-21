@@ -34,7 +34,7 @@ jobs:
       - run: npm run e2e -- --protractor-config=e2e/protractor.conf.js
   deploy:
     docker:
-      - image: circleci/node:8.9.4-stretch-browsers
+      - image: circleci/node:13.7.0-stretch-browsers
     steps:
       - checkout
       - run: echo "Start deploy"
