@@ -38,9 +38,13 @@ jobs:
     steps:
       - checkout
       - run: echo "Start deploy"
-      - run: yarn install
-      - run: yarn build
-      - run: yarn deploy
+      - run: npm install
+      - run: npm run build
+      - run:
+          name: deploy to Firebase Hosting
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN 
+
+      - run: npm run deploy
 workflows:
   version: 2
   build_and_test:
